@@ -1,4 +1,4 @@
-﻿using ImmersiveSimProject.DamageSystem;
+﻿using ImmersiveSimProject.FightSystem.DamageSystem;
 using ImmersiveSimProject.Interactions;
 
 namespace ImmersiveSimProject

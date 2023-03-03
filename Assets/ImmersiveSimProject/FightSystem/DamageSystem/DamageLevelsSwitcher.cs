@@ -1,11 +1,12 @@
 ﻿using ImmersiveSimProject.DamageSystem.Data;
 using ImmersiveSimProject.DamageSystem.View;
+using ImmersiveSimProject.FightSystem.HealthSystem;
 using System;
 
 namespace ImmersiveSimProject.FightSystem.DamageSystem
 {
     /// <summary>
-    /// Устанавливает визуал в зависимости от уровня повреждений
+    /// Устанавливает визуал в зависимости от состояния здоровья
     /// </summary>
     /// <typeparam name="D"></typeparam>
     /// <typeparam name="V"></typeparam>
@@ -13,14 +14,14 @@ namespace ImmersiveSimProject.FightSystem.DamageSystem
     {
         private readonly DamageLevels<D, V> _levels;
         private int _currentLevelIndex;
-        private readonly IDamageable _damageable;
+        private readonly IHealthHandler _handler;
 
-        public DamageLevelsSwitcher(IDamageable damageable, DamageLevels<D,V> levels)
+        public DamageLevelsSwitcher(IHealthHandler handler, DamageLevels<D,V> levels)
         {
-            _damageable = damageable;
+            _handler = handler;
             _levels = levels;
 
-            var currentPercent = CalculatePercent(damageable);
+            var currentPercent = CalculatePercent();
 
             ActivateLevel(currentPercent);
 
@@ -29,15 +30,21 @@ namespace ImmersiveSimProject.FightSystem.DamageSystem
                 _levels[i].View.gameObject.SetActive(i == _currentLevelIndex);
             }
 
-            _damageable.Damaged += DamageableDamaged;
-            _damageable.Died += DamageableDied;
+            _handler.ValueChanged += HealthValueChanged;
         }
 
-        private void DamageableDamaged(IDamageable damageable, Damage damage)
+        private void HealthValueChanged(uint value)
         {
-            var currentPercent = CalculatePercent(damageable);
+            if(_currentLevelIndex != _levels.Length -1)
+            {
+                var currentPercent = CalculatePercent();
 
-            ActivateLevel(currentPercent);
+                ActivateLevel(currentPercent);
+            }
+            else
+            {
+                _handler.ValueChanged -= HealthValueChanged;
+            }
         }
 
         private void ActivateLevel(uint percent)
@@ -53,18 +60,17 @@ namespace ImmersiveSimProject.FightSystem.DamageSystem
             _currentLevelIndex = newIndex;
         }
 
-        private uint CalculatePercent(IDamageable damageable)
+        private uint CalculatePercent()
         {
             uint currentPercent;
 
-            if (damageable.MaxHealth == damageable.CurrentHealth)
+            if (_handler.Health.Max == _handler.Health.Current)
             {
                 currentPercent = 100;
             }
             else
             {
-                var onePercent = damageable.MaxHealth / 100f;
-                currentPercent = (uint)Math.Round(damageable.CurrentHealth / onePercent);
+                currentPercent = (uint)Math.Round(_handler.Health.NormalizeValue * 100, 0);
             }
 
             return currentPercent;
@@ -75,16 +81,12 @@ namespace ImmersiveSimProject.FightSystem.DamageSystem
             for (int i = _currentLevelIndex; i < _levels.Length; i++)
             {
                 if (_levels[i].HealthLevel >= percent)
+                {
                     return i;
+                }                  
             }
 
             return _currentLevelIndex;
-        }
-
-        private void DamageableDied(IDying diyng)
-        {
-            _damageable.Damaged -= DamageableDamaged;
-            _damageable.Died -= DamageableDied;
         }
     }
 }

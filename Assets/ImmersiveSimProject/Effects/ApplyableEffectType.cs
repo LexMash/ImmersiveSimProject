@@ -7,7 +7,8 @@
         Frozen,
         Poisoned,
         Electrified,
-        Wet
+        Wet,
+        Healing
            //дописать
     }
 }

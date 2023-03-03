@@ -1,9 +1,9 @@
 ﻿using ImmersiveSimProject.DamageSystem.Data;
 using ImmersiveSimProject.DamageSystem.View;
 using System;
-using ImmersiveSimProject.StaticServices;
 using ImmersiveSimProject.Interactions;
 using ImmersiveSimProject.DamageSystem;
+using ImmersiveSimProject.FightSystem.HealthSystem;
 
 namespace ImmersiveSimProject.FightSystem.DamageSystem
 {
@@ -11,32 +11,20 @@ namespace ImmersiveSimProject.FightSystem.DamageSystem
     {
         public event Action<IDamageable, Damage> Damaged;
         public event Action<IDying> Died;
-        public bool IsDied => CurrentHealth == 0;
-        public uint MaxHealth { get; private set; }
-        public virtual uint CurrentHealth 
-        { 
-            get => _currentHealth;
-            private set
-            {
-                if(value == 0)
-                {
-                    _currentHealth = 0;
-                    Died?.Invoke(this);
-                }
-            }
-        }  
-        public IReadOnlyEncapsulatedCollection<IResistanceHandler, InteractionType> ResistanceHandlers { get; }       
+        public bool IsDied => Health.Current == 0;
+        public IHealth Health => _healthHandler.Health;
+        public IReadOnlyEncapsulatedCollection<IResistanceHandler, InteractionType> ResistanceHandlers { get; }
 
         protected readonly IEncapsulatedCollection<IResistanceHandler, InteractionType> _resistanceHandlers;
         protected readonly DamageLevelsSwitcher<D, V> _damageLevelsSwitcher;
-        private uint _currentHealth;
+        protected readonly HealthHandlerBase _healthHandler;
 
-        protected DamageableBase(uint maxHealth, uint currentHealth, DamageLevels<D, V> damageLevels, BaseResistances baseResistances)
+        protected DamageableBase(HealthHandlerBase healthHandler, DamageLevels<D, V> damageLevels, BaseResistances baseResistances)
         {
-            MaxHealth = maxHealth;
-            _currentHealth = currentHealth;
+            _healthHandler = healthHandler;
+            _healthHandler.ValueChanged += HealthValueChanged;
 
-            _damageLevelsSwitcher = new DamageLevelsSwitcher<D, V>(this, damageLevels);
+            _damageLevelsSwitcher = new DamageLevelsSwitcher<D, V>(_healthHandler, damageLevels);
             _resistanceHandlers = new ResistanceHandlerCollection();
 
             foreach(var resistance in baseResistances)
@@ -48,25 +36,24 @@ namespace ImmersiveSimProject.FightSystem.DamageSystem
 
         public virtual bool TryMakeDamage(Damage damage)
         {
-            var resultDamageValue = CalculateDamage(damage);
-
-            if(!damage.IgnoreResistance && resultDamageValue == 0)
+            if (!IsDied)
             {
-                return false;
+                var resultDamageValue = CalculateMainDamage(damage);
+
+                NotificateListeners(damage, resultDamageValue);
+
+                if (!damage.IgnoreResistance && resultDamageValue == 0)
+                {
+                    return false;
+                }
+
+                _healthHandler.ApplyDamage(resultDamageValue);
             }
 
-            ApplyDamage(resultDamageValue);
-            Notificate(damage, resultDamageValue);
-            
             return true;
         }
 
-        protected virtual void ApplyDamage(uint value)
-        {
-            CurrentHealth = StandardOperations.UINTDamageClamp(CurrentHealth, value);           
-        }
-
-        protected virtual uint CalculateDamage(Damage damage)
+        protected virtual uint CalculateMainDamage(Damage damage)
         {
             uint resultDamage;
 
@@ -81,13 +68,21 @@ namespace ImmersiveSimProject.FightSystem.DamageSystem
             }
 
             return resultDamage;
-        }
+        }      
 
-        protected virtual void Notificate(Damage damage, uint resultDamageValue) 
+        protected virtual void NotificateListeners(Damage damage, uint resultDamageValue) 
         {
-            var result = new Damage(resultDamageValue, damage.Type, damage.IgnoreResistance, damage.IsCritical, damage.Effects);
+            var result = new Damage(resultDamageValue, damage.Type, damage.IgnoreResistance, damage.IsCritical);
 
             Damaged?.Invoke(this, result);
+        }
+
+        private void HealthValueChanged(uint value)
+        {
+            if (_healthHandler.Health.Current == 0)
+            {
+                Died?.Invoke(this);
+            }
         }
     }
 }

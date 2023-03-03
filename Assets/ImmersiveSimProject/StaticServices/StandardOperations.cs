@@ -3,7 +3,7 @@
     //надо подумать над этим
     public static class StandardOperations
     {
-        public static uint UINTDamageClamp(uint health, uint damage)
+        public static uint UINT_SubtractionClamp(uint health, uint damage)
         {
             if (health <= damage)
                 return 0;
