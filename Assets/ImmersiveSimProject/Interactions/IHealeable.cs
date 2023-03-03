@@ -1,4 +1,4 @@
-﻿namespace ImmersiveSimProject.DamageSystem
+﻿namespace ImmersiveSimProject.Interactions
 {
     public interface IHealeable
     {

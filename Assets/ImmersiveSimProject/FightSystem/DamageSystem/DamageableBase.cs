@@ -3,6 +3,7 @@ using ImmersiveSimProject.DamageSystem.View;
 using ImmersiveSimProject.Effects;
 using System;
 using ImmersiveSimProject.StaticServices;
+using ImmersiveSimProject.Interactions;
 
 namespace ImmersiveSimProject.DamageSystem
 {
@@ -15,10 +16,10 @@ namespace ImmersiveSimProject.DamageSystem
         public uint MaxHealth { get; private set; }
         public virtual uint CurrentHealth { get; private set; }  
 
-        public IReadOnlyEncapsulatedCollection<IResistanceHandler, DamageType> ResistanceHandlers { get; }       
+        public IReadOnlyEncapsulatedCollection<IResistanceHandler, InteractionType> ResistanceHandlers { get; }       
         public IReadOnlyEncapsulatedCollection<IApplyableEffectHandler, ApplyableEffectType> EffectsHandlers { get; }
 
-        protected readonly IEncapsulatedCollection<IResistanceHandler, DamageType> _resistanceHandlers;
+        protected readonly IEncapsulatedCollection<IResistanceHandler, InteractionType> _resistanceHandlers;
         protected readonly IClearableEncapsulatedCollection<IApplyableEffectHandler, ApplyableEffectType> _effectsHandlers;
         protected readonly DamageLevelsSwitcher<D, V> _damageLevelsSwitcher;
 
@@ -40,10 +41,7 @@ namespace ImmersiveSimProject.DamageSystem
 
             if (effects != null)
             {
-                foreach(var effect in effects)
-                {
-                    //обращаемся к фабрике и создаём всех хендлеров
-                }
+                ApplyEffect(effects);
             }
         }
 
@@ -51,7 +49,7 @@ namespace ImmersiveSimProject.DamageSystem
         {
             var resultDamage = CalculateDamage(damage);
 
-            if(resultDamage == 0)
+            if(!damage.IgnoreResistance && resultDamage == 0)
             {
                 return false;
             }

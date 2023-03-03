@@ -1,8 +1,8 @@
 ﻿using ImmersiveSimProject.DamageSystem.Data;
 
-namespace ImmersiveSimProject.Effects
+namespace ImmersiveSimProject.Effects.Types
 {
-    public interface IDamageableEffect : IApplyableEffect
+    public interface IDamageableEffect : IMultiTimeEffect
     {
         public Damage Damage { get; }
     }

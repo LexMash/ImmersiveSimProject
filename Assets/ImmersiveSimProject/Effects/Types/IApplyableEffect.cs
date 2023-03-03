@@ -1,12 +1,9 @@
-﻿using ImmersiveSimProject.DamageSystem.Data;
-
-namespace ImmersiveSimProject.Effects
+﻿namespace ImmersiveSimProject.Effects
 {
     public interface IApplyableEffect
     {
         public ApplyableEffectType Type { get; }
         public float TimeOfAction { get; }
-        public ApplyableEffectType CancelType { get; }
-        
+        public ApplyableEffectType CancelType { get; }       
     }
 }

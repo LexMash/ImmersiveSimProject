@@ -1,5 +1,6 @@
 ﻿using ImmersiveSimProject.DamageSystem.Data;
 using ImmersiveSimProject.Effects;
+using ImmersiveSimProject.Interactions;
 using System;
 
 namespace ImmersiveSimProject.DamageSystem
@@ -12,7 +13,7 @@ namespace ImmersiveSimProject.DamageSystem
         public bool IsDestroyed { get; }
         public uint MaxHealth { get; }
         public uint CurrentHealth { get; }       
-        public IReadOnlyEncapsulatedCollection<IResistanceHandler, DamageType> ResistanceHandlers { get; }
+        public IReadOnlyEncapsulatedCollection<IResistanceHandler, InteractionType> ResistanceHandlers { get; }
         public IReadOnlyEncapsulatedCollection<IApplyableEffectHandler, ApplyableEffectType> EffectsHandlers { get; }
 
         public bool TryMakeDamage(Damage damage);

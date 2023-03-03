@@ -1,6 +1,6 @@
 ﻿namespace ImmersiveSimProject.Effects
 {
-    //будет создавать типы хендлеры по запросу
+    //будет создавать типы хендлеров по запросу
     public interface IEffectHandlersFactory
     {
     }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ImmersiveSimProject.Interactions;
+using System;
 using UnityEngine;
 
 namespace ImmersiveSimProject.DamageSystem.Data
@@ -6,13 +7,13 @@ namespace ImmersiveSimProject.DamageSystem.Data
     [Serializable]
     public class Resistance : IResistance
     {
-        [SerializeField] private DamageType _type;
+        [SerializeField] private InteractionType _type;
         [SerializeField] private int _percentage = 0;
 
-        public DamageType Type => _type;
+        public InteractionType Type => _type;
         public int Percentage => _percentage;
 
-        public Resistance(DamageType type, int percentage = 0)
+        public Resistance(InteractionType type, int percentage = 0)
         {
             _type = type;
             _percentage = percentage;

@@ -1,6 +1,6 @@
-﻿namespace ImmersiveSimProject.DamageSystem.Data
+﻿namespace ImmersiveSimProject.Interactions
 {
-    public enum DamageType
+    public enum InteractionType
     {
         Physical,
         Fire,

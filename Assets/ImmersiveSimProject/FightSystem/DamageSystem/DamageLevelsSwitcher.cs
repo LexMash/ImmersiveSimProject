@@ -4,6 +4,11 @@ using System;
 
 namespace ImmersiveSimProject.DamageSystem
 {
+    /// <summary>
+    /// Устанавливает визуал в зависимости от уровня повреждений
+    /// </summary>
+    /// <typeparam name="D"></typeparam>
+    /// <typeparam name="V"></typeparam>
     public class DamageLevelsSwitcher<D,V> where D : DamageLevelBase<V> where V : DamageLevelViewBase
     {
         private readonly DamageLevels<D, V> _levels;
