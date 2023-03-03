@@ -2,7 +2,7 @@
 using ImmersiveSimProject.DamageSystem.View;
 using System;
 
-namespace ImmersiveSimProject.DamageSystem
+namespace ImmersiveSimProject.FightSystem.DamageSystem
 {
     /// <summary>
     /// Устанавливает визуал в зависимости от уровня повреждений
@@ -13,9 +13,11 @@ namespace ImmersiveSimProject.DamageSystem
     {
         private readonly DamageLevels<D, V> _levels;
         private int _currentLevelIndex;
-        
+        private readonly IDamageable _damageable;
+
         public DamageLevelsSwitcher(IDamageable damageable, DamageLevels<D,V> levels)
         {
+            _damageable = damageable;
             _levels = levels;
 
             var currentPercent = CalculatePercent(damageable);
@@ -27,11 +29,11 @@ namespace ImmersiveSimProject.DamageSystem
                 _levels[i].View.gameObject.SetActive(i == _currentLevelIndex);
             }
 
-            damageable.Damaged += DamageableDamaged;
-            damageable.Died += DamageableDestroed;
+            _damageable.Damaged += DamageableDamaged;
+            _damageable.Died += DamageableDied;
         }
 
-        private void DamageableDamaged(IDamageable damageable, uint damage)
+        private void DamageableDamaged(IDamageable damageable, Damage damage)
         {
             var currentPercent = CalculatePercent(damageable);
 
@@ -79,10 +81,10 @@ namespace ImmersiveSimProject.DamageSystem
             return _currentLevelIndex;
         }
 
-        private void DamageableDestroed(IDamageable damageable)
+        private void DamageableDied(IDying diyng)
         {
-            damageable.Damaged -= DamageableDamaged;
-            damageable.Died -= DamageableDestroed;
+            _damageable.Damaged -= DamageableDamaged;
+            _damageable.Died -= DamageableDied;
         }
     }
 }

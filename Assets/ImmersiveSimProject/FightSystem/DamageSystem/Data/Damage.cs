@@ -7,7 +7,7 @@ namespace ImmersiveSimProject.DamageSystem.Data
     {
         public uint Value { get; }
         public InteractionType Type { get; }
-        public IApplyableEffect[] Effect { get; }
+        public IApplyableEffect[] Effects { get; }
         public bool IgnoreResistance { get; }
         public bool IsCritical { get; }
 
@@ -15,7 +15,7 @@ namespace ImmersiveSimProject.DamageSystem.Data
         {
             Value = value;
             Type = type;
-            Effect = effect;
+            Effects = effect;
             IgnoreResistance = ignoreResistance;
             IsCritical = isCritical;
         }

@@ -1,21 +1,14 @@
-﻿using ImmersiveSimProject.DamageSystem.Data;
-using ImmersiveSimProject.Effects;
+﻿using ImmersiveSimProject.DamageSystem;
+using ImmersiveSimProject.DamageSystem.Data;
 using ImmersiveSimProject.Interactions;
 using System;
 
-namespace ImmersiveSimProject.DamageSystem
+namespace ImmersiveSimProject.FightSystem.DamageSystem
 {
-    public interface IDamageable
+    public interface IDamageable : IDying
     {      
-        public event Action<IDamageable, uint> Damaged;
-        public event Action<IDamageable> Died;
-        
-        public bool IsDestroyed { get; }
-        public uint MaxHealth { get; }
-        public uint CurrentHealth { get; }       
-        public IReadOnlyEncapsulatedCollection<IResistanceHandler, InteractionType> ResistanceHandlers { get; }
-        public IReadOnlyEncapsulatedCollection<IApplyableEffectHandler, ApplyableEffectType> EffectsHandlers { get; }
-
+        public event Action<IDamageable, Damage> Damaged;    
+        public IReadOnlyEncapsulatedCollection<IResistanceHandler, InteractionType> ResistanceHandlers { get; }  
         public bool TryMakeDamage(Damage damage);
     }
 }

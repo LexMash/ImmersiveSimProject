@@ -1,8 +1,7 @@
-﻿using ImmersiveSimProject.DamageSystem;
-using ImmersiveSimProject.DamageSystem.Data;
+﻿using ImmersiveSimProject.DamageSystem.Data;
 using System;
 
-namespace ImmersiveSimProject.FightSystem
+namespace ImmersiveSimProject.FightSystem.DamageSystem
 {
     public interface IAttacker
     {
