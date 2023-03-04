@@ -6,7 +6,6 @@ namespace ImmersiveSimProject.FightSystem.HealthSystem
     {
         public event Action<uint> ValueChanged;
         public IHealth Health {get; }
-
         public void Heal(uint value);
         public void ApplyDamage(uint value);
         public void IncreaseMaxHealth(uint value);

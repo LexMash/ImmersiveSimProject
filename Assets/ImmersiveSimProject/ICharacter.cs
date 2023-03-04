@@ -1,6 +1,6 @@
 ﻿namespace ImmersiveSimProject
 {
-    public interface IActor
+    public interface ICharacter
     {
     }
 }

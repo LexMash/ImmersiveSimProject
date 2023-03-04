@@ -2,6 +2,6 @@
 {
     public interface IInteractable
     {
-        public bool TryInteract(IActor actor);
+        public bool TryInteract(ICharacter actor);
     }
 }
