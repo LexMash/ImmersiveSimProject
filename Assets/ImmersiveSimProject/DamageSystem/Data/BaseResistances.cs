@@ -5,13 +5,13 @@ using UnityEngine;
 namespace ImmersiveSimProject.DamageSystem.Data
 {
     [CreateAssetMenu(fileName = "BaseResistanceConfig", menuName = "Immersive/DamageSystem/BaseResistanceConfig")]
-    public class BaseResistances : ScriptableObject, IReadOnlyEncapsulatedCollection<IResistance, int>
+    public class BaseResistances : ScriptableObject, IReadOnlyEncapsulatedCollection<Resistance, int>
     {
         [SerializeField] private List<Resistance> _resistances;
 
-        public IResistance this[int index] => _resistances[index];
+        public Resistance this[int index] => _resistances[index];
         public int Count => _resistances.Count;
-        public IEnumerator<IResistance> GetEnumerator() => _resistances.GetEnumerator();
+        public IEnumerator<Resistance> GetEnumerator() => _resistances.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

@@ -13,7 +13,7 @@ namespace ImmersiveSimProject.Effects
             set => Set(type, value);
         }
 
-        private readonly Dictionary<ApplyableEffectType, IApplyableEffectHandler> _handlersMap = new Dictionary<ApplyableEffectType, IApplyableEffectHandler>();
+        private readonly Dictionary<ApplyableEffectType, IApplyableEffectHandler> _handlersMap = new();
 
         public void Remove(ApplyableEffectType type)
         {

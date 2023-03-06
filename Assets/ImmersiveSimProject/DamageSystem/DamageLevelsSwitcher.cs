@@ -1,6 +1,7 @@
 ﻿using ImmersiveSimProject.DamageSystem.Data;
 using ImmersiveSimProject.DamageSystem.View;
 using ImmersiveSimProject.FightSystem.HealthSystem;
+using ImmersiveSimProject.StaticServices;
 using System;
 
 namespace ImmersiveSimProject.FightSystem.DamageSystem
@@ -14,9 +15,9 @@ namespace ImmersiveSimProject.FightSystem.DamageSystem
     {
         private readonly DamageLevels<D, V> _levels;
         private int _currentLevelIndex;
-        private readonly IHealthHandler _handler;
+        private readonly HealthHandlerBase _handler;
 
-        public DamageLevelsSwitcher(IHealthHandler handler, DamageLevels<D,V> levels)
+        public DamageLevelsSwitcher(HealthHandlerBase handler, DamageLevels<D,V> levels)
         {
             _handler = handler;
             _levels = levels;
@@ -30,12 +31,12 @@ namespace ImmersiveSimProject.FightSystem.DamageSystem
                 _levels[i].View.gameObject.SetActive(i == _currentLevelIndex);
             }
 
-            _handler.ValueChanged += HealthValueChanged;
+            _handler.StatValueChanged += HealthValueChanged;
         }
 
-        private void HealthValueChanged(uint value)
+        private void HealthValueChanged()
         {
-            if(_currentLevelIndex != _levels.Length -1)
+            if(IsNotDestroy())
             {
                 var currentPercent = CalculatePercent();
 
@@ -43,7 +44,7 @@ namespace ImmersiveSimProject.FightSystem.DamageSystem
             }
             else
             {
-                _handler.ValueChanged -= HealthValueChanged;
+                _handler.StatValueChanged -= HealthValueChanged;
             }
         }
 
@@ -64,13 +65,14 @@ namespace ImmersiveSimProject.FightSystem.DamageSystem
         {
             uint currentPercent;
 
-            if (_handler.Health.Max == _handler.Health.Current)
+            if (_handler.BaseValue == _handler.CurrentValue)
             {
                 currentPercent = 100;
             }
             else
             {
-                currentPercent = (uint)Math.Round(_handler.Health.NormalizeValue * 100, 0);
+                var normalize = StandardOperations.Normalize(_handler.BaseValue, _handler.CurrentValue);
+                currentPercent = (uint)Math.Round(normalize * 100, 0);
             }
 
             return currentPercent;
@@ -87,6 +89,11 @@ namespace ImmersiveSimProject.FightSystem.DamageSystem
             }
 
             return _currentLevelIndex;
+        }
+
+        private bool IsNotDestroy()
+        {
+            return _currentLevelIndex != _levels.Length - 1;
         }
     }
 }

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BaseResistanceConfigExample
   m_EditorClassIdentifier: 
   _resistances:
-  - _type: 1
-    _percentage: 30
-  - _type: 2
-    _percentage: 10
+  - Value: 10
+    DamageType: 2
+  - Value: 0
+    DamageType: 1

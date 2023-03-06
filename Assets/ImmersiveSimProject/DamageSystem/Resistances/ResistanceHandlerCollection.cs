@@ -6,26 +6,32 @@ using System.Linq;
 
 namespace ImmersiveSimProject.DamageSystem
 {
-    public class ResistanceHandlerCollection : IEncapsulatedCollection<IResistanceHandler, InteractionType>
+    public class ResistanceHandlerCollection : IEncapsulatedCollection<ResistanceHandlerBase, InteractionType>
     {
-        public IResistanceHandler this[InteractionType type] 
+        public ResistanceHandlerBase this[InteractionType type] 
         {
-            get => _handlersMap.FirstOrDefault(resistance => resistance.Value.BaseResistance.Type == type).Value;
+            get => _handlersMap.FirstOrDefault(resistance => resistance.Value.DamageType == type).Value;
             set => _handlersMap[type] = value;
         }
 
         public int Count => _handlersMap.Count;
 
-        private readonly Dictionary<InteractionType, IResistanceHandler> _handlersMap = new Dictionary<InteractionType, IResistanceHandler>();
+        private readonly Dictionary<InteractionType, ResistanceHandlerBase> _handlersMap = new();
 
         //получается, что мы не можем удалить сопротивление
         //можем его только обнулить... надо подумать как это убрать
         public void Remove(InteractionType type)
         {
-            _handlersMap[type] = new ResistanceHandler(new Resistance(type, 0));
+            var resistance = new Resistance
+            {
+                Value = 0,
+                DamageType = type
+            };
+
+            _handlersMap[type] = new ResistanceHandlerBase(resistance);
         }
 
-        public IEnumerator<IResistanceHandler> GetEnumerator() => _handlersMap.Values.GetEnumerator();
+        public IEnumerator<ResistanceHandlerBase> GetEnumerator() => _handlersMap.Values.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

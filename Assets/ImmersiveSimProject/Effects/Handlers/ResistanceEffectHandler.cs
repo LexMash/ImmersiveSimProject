@@ -9,7 +9,7 @@ namespace ImmersiveSimProject.Effects
         public ResistanceEffectHandler(IResistanceEffect effect, IResistanceHandler resistanceHandler) : base(effect)
         {
             _resistanceHandler = resistanceHandler;
-            _resistanceHandler.ApplyModificator(_effect.ResistanceModificator);
+            _resistanceHandler.AddModificator(_effect.ResistanceModificator);
         }
 
         public override void Terminate()
