@@ -1,4 +1,5 @@
 ﻿using ImmersiveSimProject.DamageSystem.Data;
+using ImmersiveSimProject.ItemsSystem;
 using System;
 
 namespace ImmersiveSimProject.FightSystem.DamageSystem

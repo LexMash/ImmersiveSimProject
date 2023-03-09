@@ -2,10 +2,10 @@
 
 namespace ImmersiveSimProject.Effects
 {
-    public abstract class EffectHandlerBase<E> : IApplyableEffectHandler where E : IApplyableEffect
+    public abstract class EffectHandlerBase<E> : IEffectHandler where E : IEffect
     {
-        public event Action<IApplyableEffect> EffectTerminated;
-        public IApplyableEffect Effect => _effect;
+        public event Action<IEffect> EffectTerminated;
+        public IEffect Effect => _effect;
         public float RemainingTime { get; private set; }
 
         protected readonly E _effect;

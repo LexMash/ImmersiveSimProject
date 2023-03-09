@@ -1,6 +1,6 @@
 ﻿namespace ImmersiveSimProject.Effects
 {
-    public enum ApplyableEffectType
+    public enum EffectType
     {
         None,
         Burning,

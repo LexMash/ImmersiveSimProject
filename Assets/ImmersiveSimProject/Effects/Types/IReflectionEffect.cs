@@ -2,7 +2,7 @@
 
 namespace ImmersiveSimProject.Effects.Types
 {
-    public interface IReflectionEffect : IApplyableEffect
+    public interface IReflectionEffect : IEffect
     {
         public InteractionType DamageType { get; }
         public uint ReflectionPercentage { get; }

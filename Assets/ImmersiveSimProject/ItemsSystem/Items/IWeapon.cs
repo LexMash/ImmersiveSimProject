@@ -1,17 +1,16 @@
 ﻿using ImmersiveSimProject.Effects;
 using ImmersiveSimProject.Interactions;
 
-namespace ImmersiveSimProject.FightSystem
+namespace ImmersiveSimProject.ItemsSystem
 {
-    public interface IWeapon
+    public interface IWeapon : IItem
     {
-        public string NameID { get; }
         public uint MaxDamage { get; }
         public uint MinDamage { get; }
         public uint CriticalDamagePercent { get; }
-        public uint CriticalMultiplier { get; }
+        public float CriticalMultiplier { get; }
         public InteractionType DamageType { get; }
-        public IApplyableEffect[] Effect { get; }
+        public IEffect[] Effect { get; }
         public bool IgnoreResistance { get; }
     }
 }

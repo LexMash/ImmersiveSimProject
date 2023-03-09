@@ -2,10 +2,10 @@
 
 namespace ImmersiveSimProject.Effects
 {
-    public interface IApplyableEffectHandler
+    public interface IEffectHandler
     {
-        public event Action<IApplyableEffect> EffectTerminated;
-        public IApplyableEffect Effect { get; }
+        public event Action<IEffect> EffectTerminated;
+        public IEffect Effect { get; }
         public float RemainingTime { get; }
 
         public void Update(float deltaTime);

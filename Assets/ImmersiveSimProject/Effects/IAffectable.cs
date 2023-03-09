@@ -2,7 +2,7 @@
 {
     public interface IAffectable
     {
-        public IReadOnlyEncapsulatedCollection<IApplyableEffectHandler, ApplyableEffectType> EffectsHandlers { get; }
-        public bool TryApplyEffects(params IApplyableEffect[] effect);
+        public IReadOnlyEncapsulatedCollection<IEffectHandler, EffectType> EffectsHandlers { get; }
+        public bool TryApplyEffects(params IEffect[] effect);
     }
 }

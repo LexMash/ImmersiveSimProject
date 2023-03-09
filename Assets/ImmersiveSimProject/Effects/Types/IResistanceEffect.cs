@@ -2,7 +2,7 @@
 
 namespace ImmersiveSimProject.Effects
 {
-    public interface IResistanceEffect : IApplyableEffect
+    public interface IResistanceEffect : IEffect
     {
         public Resistance ResistanceModificator { get; }
     }

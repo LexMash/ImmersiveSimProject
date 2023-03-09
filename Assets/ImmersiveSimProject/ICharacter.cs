@@ -4,10 +4,8 @@ using ImmersiveSimProject.FightSystem.HealthSystem.Data;
 
 namespace ImmersiveSimProject
 {
-    public interface ICharacter : IDamageable, IHealable, IAttacker
+    public interface ICharacter : IDying, IDamageable, IHealable, IAttacker, INamed
     {
-        public string NameID { get; }
-        public string DescriptionID { get; }
         public Health Health { get; } //можно каждый раз возвращать новый объект с данными из хендлера
     }
 

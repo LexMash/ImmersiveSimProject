@@ -14,19 +14,6 @@ namespace ImmersiveSimProject.FightSystem.HealthSystem
             _health = health;
         }
 
-        //перенести в 
-        //public virtual void Heal(uint value)
-        //{
-        //    Math.Clamp(_health.Value += value, 0, _health.MaxValue);
-        //    NotificateListeners();
-        //}
-
-        //public virtual void ApplyDamage(uint value)
-        //{
-        //    _health.Value = StandardOperations.UINT_SubtractionClamp(_health.Value, value);
-        //    NotificateListeners();
-        //}
-
         public override void IncreaseBaseValue(uint value)
         {
             _health.MaxValue += value;

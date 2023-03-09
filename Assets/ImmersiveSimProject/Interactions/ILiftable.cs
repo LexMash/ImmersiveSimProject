@@ -2,7 +2,7 @@
 
 namespace ImmersiveSimProject.Interactions
 {
-    public interface ILiftable : IInteractable, IMovable
+    public interface ILiftable
     {
         public float Weight { get; }
         public uint MinForce { get; }

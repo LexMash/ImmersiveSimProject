@@ -4,18 +4,18 @@ using System.Linq;
 
 namespace ImmersiveSimProject.Effects
 {
-    public class EffectHandlerCollection : IClearableEncapsulatedCollection<IApplyableEffectHandler, ApplyableEffectType>
+    public class EffectHandlerCollection : IClearableEncapsulatedCollection<IEffectHandler, EffectType>
     {
         public int Count => _handlersMap.Count;
-        public IApplyableEffectHandler this[ApplyableEffectType type]
+        public IEffectHandler this[EffectType type]
         {
             get => _handlersMap.FirstOrDefault(handler => handler.Value.Effect.Type == type).Value;
             set => Set(type, value);
         }
 
-        private readonly Dictionary<ApplyableEffectType, IApplyableEffectHandler> _handlersMap = new();
+        private readonly Dictionary<EffectType, IEffectHandler> _handlersMap = new();
 
-        public void Remove(ApplyableEffectType type)
+        public void Remove(EffectType type)
         {
             _handlersMap[type].EffectTerminated -= HandlerEffectTerminated;
             _handlersMap.Remove(type);
@@ -31,10 +31,10 @@ namespace ImmersiveSimProject.Effects
             _handlersMap.Clear();
         }
 
-        public IEnumerator<IApplyableEffectHandler> GetEnumerator() => _handlersMap.Values.GetEnumerator();
+        public IEnumerator<IEffectHandler> GetEnumerator() => _handlersMap.Values.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        private void Set(ApplyableEffectType type, IApplyableEffectHandler handler)
+        private void Set(EffectType type, IEffectHandler handler)
         {
             if (_handlersMap.ContainsKey(type))
             {
@@ -49,12 +49,12 @@ namespace ImmersiveSimProject.Effects
             }          
         }
 
-        private void HandlerEffectTerminated(IApplyableEffect effect)
+        private void HandlerEffectTerminated(IEffect effect)
         {
             Remove(effect.Type);
         }
 
-        private bool TryCancelEffects(IApplyableEffect effect)
+        private bool TryCancelEffects(IEffect effect)
         {
             var canceledEffects = _handlersMap.Where(handler => handler.Value.Effect.CancelType == effect.Type);
 

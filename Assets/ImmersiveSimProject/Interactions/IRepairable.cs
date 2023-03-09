@@ -1,6 +1,6 @@
 ﻿namespace ImmersiveSimProject.Interactions
 {
-    public interface IRepairable : IInteractable
+    public interface IRepairable
     {
         public bool TryRepaire();
     }
