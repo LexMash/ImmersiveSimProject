@@ -2,23 +2,15 @@
 
 namespace ImmersiveSimProject.ItemsSystem
 {
-    [CreateAssetMenu(fileName = "Item", menuName = "Immersive/Items/Item")]
-    public class Item : ScriptableObject, IItem
+    public abstract class Item : ScriptableObject, IItem
     {
-        [SerializeField] private string _nameID;
-        [SerializeField] private string _descriprionID;
-        [SerializeField] private ItemCategory _category;
-
-        [SerializeField] private Sprite _icon;
-        [SerializeField] private ItemView _visual;
-        
-        [SerializeField] private string[] _componentIDs; //возможно стоит заменить на Item, что бы не ошибаться в ID
-
-        public string NameID => _nameID;
-        public string DescriptionID => _descriprionID;
-        public ItemCategory Category => _category;
-        public Sprite Icon => _icon;
-        public ItemView Visual => _visual;       
-        public string[] ComponentIDs => _componentIDs;       
+        [field: SerializeField] public string NameID { get; private set; }
+        [field: SerializeField] public string DescriptionID { get; private set; }
+        [field: SerializeField] public Sprite Icon { get; private set; }
+        [field: SerializeField] public ItemView Visual { get; private set; }
+        [field: SerializeField] public string RecipeNameID { get; private set; }
+        [field: SerializeField] public uint Cost { get; private set; }
+        [field: SerializeField] public float Weight { get; private set; }
+        [field: SerializeField] public uint MaxCapacityInSlot { get; private set; }
     }
 }

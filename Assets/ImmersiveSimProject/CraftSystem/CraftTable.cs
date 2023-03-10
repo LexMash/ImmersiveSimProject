@@ -7,13 +7,13 @@ namespace ImmersiveSimProject.Craft
 {
     //как то это шибко примитивно... надо еще подумать над этим
 
-    [CreateAssetMenu(fileName = "CraftTable", menuName = "Immersive/Converter/CraftTable")]
+    [CreateAssetMenu(fileName = "CraftTable", menuName = "Immersive/Craft/CraftTable")]
     public class CraftTable : ScriptableObject, ICraftTable<IItem, string>
     {
         [field: SerializeField] public Sprite Icon { get; private set; }
         [SerializeField] private string _nameID;
         [SerializeField] private string _descriptionID;       
-        [SerializeField] private ItemContructRecipe[] _recipes;
+        [SerializeField] private ItemRecipe[] _recipes;
 
         public string NameID => _nameID;
         public string DescriptionID => _descriptionID;

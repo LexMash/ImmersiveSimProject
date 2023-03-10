@@ -5,10 +5,11 @@ namespace ImmersiveSimProject.ContainerSystem
 {
     public class ContainerView : MonoBehaviour, INamed
     {
-        public event Action<string> Opened;
-        //TODO
-        public string NameID => throw new System.NotImplementedException();
+        [SerializeField] private string _nameID;
+        [SerializeField] private string _descriptionID;
+        public string NameID => _nameID;
+        public string DescriptionID => _descriptionID;
 
-        public string DescriptionID => throw new System.NotImplementedException();
+        public event Action<string> Opened;
     }
 }

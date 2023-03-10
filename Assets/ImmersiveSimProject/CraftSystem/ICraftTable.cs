@@ -6,8 +6,6 @@ namespace ImmersiveSimProject.CraftSystem
     {
         public Sprite Icon { get; }
         public TResult Construct(params TIngredient[] ingridients);
-
         public TResult[] Deconstruct(TIngredient target);
-        //public TResult[] Deconstruct(TResult target);
     }
 }

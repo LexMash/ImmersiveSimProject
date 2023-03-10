@@ -6,7 +6,7 @@ namespace ImmersiveSimProject.ContainerSystem
     {
         public IItem Item { get; }
         public uint Amount { get; }
-        
-        //public bool IsEmpty { get; }
+        public bool IsEmpty { get; }
+        public bool IsFull { get; }
     }
 }
