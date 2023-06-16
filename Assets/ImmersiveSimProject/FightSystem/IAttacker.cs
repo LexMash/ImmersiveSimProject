@@ -7,7 +7,7 @@ namespace ImmersiveSimProject.FightSystem.DamageSystem
     public interface IAttacker
     {
         public event Action<ICharacter, ICharacter, Damage> Attacked;
-        public IWeapon Weapon { get; }
+        public IWeaponMeta Weapon { get; }
         public void Attack();
     }
 }

@@ -3,28 +3,28 @@ using System.Collections.Generic;
 
 namespace ImmersiveSimProject.ItemsSystem
 {
-    public class MasterItemsDataBase : IMasterItemsDataBase
+    public class MasterItemMetasDataBase : IMasterItemMetasDataBase
     {
-        private readonly SortedDictionary<string, IItem> _itemsMap = new();
+        private readonly SortedDictionary<string, IItemMeta> _itemMetasMap = new();
 
-        public MasterItemsDataBase(IItem[] items) 
+        public MasterItemMetasDataBase(IItemMeta[] itemMetas) 
         { 
-            foreach(var item in items)
+            foreach(var item in itemMetas)
             {
-                _itemsMap[item.NameID] = item;
+                _itemMetasMap[item.NameID] = item;
             }
         }
 
-        public IItem GetItemByNameID(string nameID)
+        public IItemMeta GetItemMetaByNameID(string nameID)
         {
             if (string.IsNullOrEmpty(nameID))
             {
                 throw new Exception($"Your nameID request  is null or empty. Master Items DataBase");
             }
 
-            if (_itemsMap.ContainsKey(nameID))
+            if (_itemMetasMap.ContainsKey(nameID))
             {
-                return _itemsMap[nameID];
+                return _itemMetasMap[nameID];
             }
 
             throw new Exception($"Master Items Data Base not contains item with {nameID}.");

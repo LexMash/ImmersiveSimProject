@@ -7,8 +7,8 @@ namespace ImmersiveSimProject.Interactions
     {
         public event Action<string> Unlocked;
         public bool IsLocked { get; }
-        public IItem[] Key { get; }
+        public IItemMeta[] Key { get; }
         //public uint LockpickLevel { get; }
-        public bool TryUnlock(IItem key);
+        public bool TryUnlock(IItemMeta key);
     }
 }

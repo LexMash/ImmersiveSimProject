@@ -2,7 +2,7 @@
 
 namespace ImmersiveSimProject.ItemsSystem
 {
-    public interface IItem : INamed
+    public interface IItemMeta : INamed
     {
         public Sprite Icon { get; }
         public ItemView Visual { get; }     

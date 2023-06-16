@@ -2,7 +2,7 @@
 
 namespace ImmersiveSimProject.ItemsSystem
 {
-    public abstract class Item : ScriptableObject, IItem
+    public abstract class ItemMeta : ScriptableObject, IItemMeta
     {
         [field: SerializeField] public string NameID { get; private set; }
         [field: SerializeField] public string DescriptionID { get; private set; }

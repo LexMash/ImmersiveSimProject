@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ImmersiveSimProject.ItemsSystem
 {
-    public interface IWeapon : IItem
+    public interface IWeaponMeta : IItemMeta
     {
         public uint MaxDamage { get; }
         public uint MinDamage { get; }

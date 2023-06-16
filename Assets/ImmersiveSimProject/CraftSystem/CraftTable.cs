@@ -8,7 +8,7 @@ namespace ImmersiveSimProject.Craft
     //как то это шибко примитивно... надо еще подумать над этим
 
     [CreateAssetMenu(fileName = "CraftTable", menuName = "Immersive/Craft/CraftTable")]
-    public class CraftTable : ScriptableObject, ICraftTable<IItem, string>
+    public class CraftTable : ScriptableObject, ICraftTable<IItemMeta, string>
     {
         [field: SerializeField] public Sprite Icon { get; private set; }
         [SerializeField] private string _nameID;
@@ -18,29 +18,24 @@ namespace ImmersiveSimProject.Craft
         public string NameID => _nameID;
         public string DescriptionID => _descriptionID;
 
-        public IItem Construct(params string[] itemsNameIDs)
+        public IItemMeta Construct(params string[] ingredientsNameIDs)
         {
-            var results = _recipes.Where(i => i.Ingredients.Count == itemsNameIDs.Length).ToList();
+            var results = _recipes.Where(i => i.Ingredients.Count == ingredientsNameIDs.Length);
 
-            for (int i = 0; i < itemsNameIDs.Length; i++)
+            for (int i = 0; i < ingredientsNameIDs.Length; i++)
             {
-                //требуется получить доступ к базе данных всех предметов
+                results = results.Where(recipe => recipe.Ingredients.Any(item => item.NameID == ingredientsNameIDs[i]));
 
-                //var itemByID = GetItemByID();
-                //results = results.Where(recipe => recipe.Targets.Contains() == true;
-
-                //if (results.Count() == 0)
-                //    return null;
-
-                //results = results.ToList();
+                if (results.Count() == 0)
+                    return null;
             }
 
             return results.First().Result;
         }
 
-        public IItem[] Deconstruct(string itemsNameID)
+        public IItemMeta[] Deconstruct(string itemsNameID)
         {
-            return _recipes.FirstOrDefault(recipe => recipe.Result.NameID == itemsNameID).Ingredients.ToArray();
+            return _recipes.FirstOrDefault(recipe => recipe.NameID == itemsNameID).Ingredients.ToArray();
         }
     }
 }

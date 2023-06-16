@@ -8,8 +8,8 @@ namespace ImmersiveSimProject.ContainerSystem
 {
     public class Container : IContainer
     {
-        public event Action<IItem, uint> ItemAdded;
-        public event Action<IItem, uint> ItemRemoved;
+        public event Action<IItemMeta, uint> ItemAdded;
+        public event Action<IItemMeta, uint> ItemRemoved;
         public string NameID { get; }
         public string DescriptionID {get; }
         public int Capacity => _slots.Count;
@@ -30,17 +30,17 @@ namespace ImmersiveSimProject.ContainerSystem
             }
         }
 
-        public bool Contains(IItem item) => _slots.FirstOrDefault(slot => slot.Item.Equals(item)) != null;
+        public bool Contains(IItemMeta item) => _slots.FirstOrDefault(slot => slot.Item.Equals(item)) != null;
 
-        public bool ContainsAmount(IItem item, uint amount = 1)
+        public bool ContainsAmount(IItemMeta itemMeta, uint amount = 1)
         {
             if (amount == 0)
             {
-                ZeroValueWarning(" find operation ");
+                ZeroAmountWarning("find operation");
                 return false;
             }
 
-            var allSlotsContainsItem = _slots.Where(slot => slot.Item.Equals(item)).ToList();
+            var allSlotsContainsItem = _slots.Where(slot => slot.Item.Equals(itemMeta)).ToList();
 
             if(allSlotsContainsItem != null && allSlotsContainsItem.Count > 0)
             {
@@ -52,57 +52,62 @@ namespace ImmersiveSimProject.ContainerSystem
             return false;
         }
 
-        public bool TrAddItem(IItem item, uint amount = 1)
+        public bool TrAddItem(IItemMeta itemMeta, uint amount = 1)
         {
             if (IsFull)
                 return false;
 
             if (amount == 0)
             {
-                ZeroValueWarning(" add operation ");
+                ZeroAmountWarning("add operation");
                 return false;
             }
 
-            var notFullSlots = _slots.Where(slot => (slot.Item.Equals(item) && !slot.IsFull) || slot.IsEmpty).ToList();
+            var notFullSlots = _slots.Where(slot => (slot.Item.Equals(itemMeta) && !slot.IsFull) || slot.IsEmpty).ToList();
 
             if (notFullSlots != null && notFullSlots.Count() > 0)
             {
-                for(int i = 0;  i < notFullSlots.Count(); i++)
+                if(CanAddInSlots(notFullSlots, itemMeta, amount))
                 {
-                    var slot = notFullSlots[i];
-
-                    if (CanAddToSlot(slot, amount))
+                    for (int i = 0; i < notFullSlots.Count(); i++)
                     {
-                        if (slot.IsEmpty)
+                        var slot = notFullSlots[i];
+
+                        if (CanAddInSlot(slot, itemMeta, amount))
                         {
-                            slot.Item = item;
+                            if (slot.IsEmpty)
+                            {
+                                slot.Item = itemMeta;
+                            }
+
+                            slot.Amount += amount;
+
+                            NotificateListeners(itemMeta, amount, ItemAdded);
+                            return true;
                         }
+                        else
+                        {
+                            if (slot.IsEmpty)
+                            {
+                                slot.Item = itemMeta;
+                            }
 
-                        slot.Amount += amount;
-
-                        NotificateListeners(item, amount, ItemAdded);
-                        return true;
+                            var canBeAddedAmount = slot.Item.MaxCapacityInSlot - slot.Amount;
+                            slot.Amount += canBeAddedAmount;
+                            amount -= canBeAddedAmount;
+                        }
                     }
-                    else
-                    {
-                        var possibleAmount = slot.Item.MaxCapacityInSlot - slot.Amount;                       
-                        slot.Amount += possibleAmount;
-                        amount -= possibleAmount;
-                    }
-
-                    if (IsFull)
-                        break;
-                }
+                }            
             }
 
-            return false;          
+            return amount == 0;          
         }
 
-        public bool TrAddItemInSlot(int slotIndex, IItem item, uint amount = 1)
+        public bool TrAddItemInSlot(int slotIndex, IItemMeta itemMeta, uint amount = 1)
         {
             if (amount == 0)
             {
-                ZeroValueWarning(" add operation ");
+                ZeroAmountWarning("add operation");
                 return false;
             }
 
@@ -111,22 +116,30 @@ namespace ImmersiveSimProject.ContainerSystem
             if (slot.IsFull)
                 return false;
 
-            if(slot.Item.Equals(item) && CanAddToSlot(slot, amount))
+            if(slot.IsEmpty || slot.Item.Equals(itemMeta))
             {
-                slot.Amount += amount;
+                if(CanAddInSlot(slot, itemMeta, amount))
+                {
+                    if (slot.IsEmpty)
+                    {
+                        slot.Item = itemMeta;
+                    }
 
-                NotificateListeners(item, amount, ItemAdded);
-                return true;
+                    slot.Amount += amount;
+
+                    NotificateListeners(itemMeta, amount, ItemAdded);
+                    return true;
+                }              
             }
-
+           
             return false;
         }
 
-        public bool TryRemoveItem(IItem item, uint amount = 1)
+        public bool TryRemoveItem(IItemMeta item, uint amount = 1)
         {
             if (amount == 0)
             {
-                ZeroValueWarning(" remove operation "); ;
+                ZeroAmountWarning("remove operation"); ;
                 return false;
             }
 
@@ -141,6 +154,8 @@ namespace ImmersiveSimProject.ContainerSystem
                     if(CanRemoveFromSlot(slot, amount))
                     { 
                         slot.Amount -= amount;
+
+                        TryClearSlot(slot);
 
                         NotificateListeners(item, amount, ItemRemoved);
                         return true;
@@ -158,11 +173,11 @@ namespace ImmersiveSimProject.ContainerSystem
             return false;
         }
 
-        public bool TryRemoveItemFromSlot(int slotIndex, IItem item, uint amount = 1)
+        public bool TryRemoveItemFromSlot(int slotIndex, IItemMeta item, uint amount = 1)
         {
             if (amount == 0)
             {
-                ZeroValueWarning(" remove operation "); ;
+                ZeroAmountWarning("remove operation"); ;
                 return false;
             }
 
@@ -200,7 +215,6 @@ namespace ImmersiveSimProject.ContainerSystem
             }
         }
 
-
         private bool TryClearSlot(ContainerSlot slot)
         {
             if (slot.Amount == 0)
@@ -212,14 +226,36 @@ namespace ImmersiveSimProject.ContainerSystem
             return false;
         }
 
-        private bool CanAddToSlot(ContainerSlot slot, uint amount)
+        private bool CanAddInSlot(ContainerSlot slot, IItemMeta itemMeta, uint amount)
         {
             if (!slot.IsEmpty)
             {
                 return slot.Amount + amount <= slot.Item.MaxCapacityInSlot;
             }
+            else
+            {
+                return itemMeta.MaxCapacityInSlot <= amount;
+            }
+        }
 
-            return true;
+        private bool CanAddInSlots(List<ContainerSlot> slots, IItemMeta itemMeta, uint amount)
+        {
+            for (int i = 0; i < slots.Count(); i++)
+            {
+                var slot = slots[i];
+
+                if (CanAddInSlot(slot, itemMeta, amount))
+                {
+                    return true;
+                }
+                else
+                {
+                    var canBeAddedAmount = itemMeta.MaxCapacityInSlot - slot.Amount;
+                    amount -= canBeAddedAmount;
+                }
+            }
+
+            return amount == 0;
         }
 
         private bool CanRemoveFromSlot(ContainerSlot slot, uint amount)
@@ -232,12 +268,10 @@ namespace ImmersiveSimProject.ContainerSystem
             return false;
         }
 
-        private void ZeroValueWarning(string operation) => Debug.LogWarning($"Amount cannot be 0 -{operation}- Container {NameID}");
-        private void NotificateListeners(IItem item, uint amount, Action<IItem, uint> action) => action?.Invoke(item, amount);
+        private void ZeroAmountWarning(string operation) 
+            => Debug.LogWarning($"Amount cannot be 0 -{operation}- Container {NameID}");
 
-        //public bool HasEmptyCells()
-        //{
-        //    return _slots.Any(slot => slot.IsEmpty);
-        //}
+        private void NotificateListeners(IItemMeta item, uint amount, Action<IItemMeta, uint> action) 
+            => action?.Invoke(item, amount);
     }
 }

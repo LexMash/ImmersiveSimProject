@@ -8,7 +8,7 @@ namespace ImmersiveSimProject.ContainerSystem
     //в виде - ID вещи + данные из обёртки
     public interface ICharacterItem
     {
-        public IItem Item { get; }
+        public IItemMeta Item { get; }
         public uint Strength { get; } //пример
     }
 }

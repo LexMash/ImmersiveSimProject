@@ -10,10 +10,10 @@ namespace ImmersiveSimProject.ItemsSystem
     {
         [SerializeField] private string _nameID;
         [SerializeField] private string _descriptionID;
-        [SerializeField] private Item[] _items;
+        [SerializeField] private ItemMeta[] _items;
 
         public string NameID => _nameID;
         public string DescriptionID => _descriptionID;
-        public IReadOnlyList<IItem> Items => _items;
+        public IReadOnlyList<IItemMeta> Items => _items;
     }
 }

@@ -1,8 +1,8 @@
 ﻿namespace ImmersiveSimProject.ItemsSystem
 {
-    public interface IMasterItemsDataBase
+    public interface IMasterItemMetasDataBase
     {
-        public IItem GetItemByNameID(string nameID);
+        public IItemMeta GetItemMetaByNameID(string nameID);
 
         //public IItemGetRandomItem(parameters); //TODO
     }

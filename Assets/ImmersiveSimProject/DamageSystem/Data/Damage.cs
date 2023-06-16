@@ -5,14 +5,14 @@ namespace ImmersiveSimProject.DamageSystem.Data
 {
     public readonly struct Damage
     {
-        public object Attacker { get; } //пока object - потом заменим
+        public ICharacter Attacker { get; }
         public uint Value { get; }
         public InteractionType Type { get; }
         public IEffect[] Effects { get; }
         public bool IgnoreResistance { get; }
         public bool IsCritical { get; }
 
-        public Damage(object attacker, uint value, InteractionType type, bool ignoreResistance, bool isCritical = false, params IEffect[] effect)
+        public Damage(ICharacter attacker, uint value, InteractionType type, bool ignoreResistance, bool isCritical = false, params IEffect[] effect)
         {
             Attacker = attacker;
             Value = value;
