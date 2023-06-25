@@ -32,7 +32,6 @@ namespace ImmersiveSimProject.Effects
         }
 
         public IEnumerator<IEffectHandler> GetEnumerator() => _handlersMap.Values.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         private void Set(EffectType type, IEffectHandler handler)
         {

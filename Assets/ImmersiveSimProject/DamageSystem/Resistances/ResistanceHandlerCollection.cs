@@ -1,6 +1,5 @@
 ﻿using ImmersiveSimProject.DamageSystem.Data;
 using ImmersiveSimProject.Interactions;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -32,6 +31,5 @@ namespace ImmersiveSimProject.DamageSystem
         }
 
         public IEnumerator<ResistanceHandlerBase> GetEnumerator() => _handlersMap.Values.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }
