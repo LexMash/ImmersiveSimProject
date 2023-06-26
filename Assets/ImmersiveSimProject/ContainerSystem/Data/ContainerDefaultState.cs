@@ -6,7 +6,7 @@ namespace ImmersiveSimProject.ItemsSystem.Data
     /// Кофигурация базового состояния контейнера для первичной инициализации, если нет сохраннёных данных
     /// </summary>
     [CreateAssetMenu(fileName = "ContainerDefaultState", menuName = "Application/Containers/ContainerDefaultState")]
-    public partial class ContainerDefaultState : ScriptableObject
+    public class ContainerDefaultState : ScriptableObject
     {
         [SerializeField] private string _nameID;
         [SerializeField] private string _descriptionID;
