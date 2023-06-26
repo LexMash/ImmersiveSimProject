@@ -9,7 +9,7 @@ namespace ImmersiveSimProject.ContainerSystem.Implementation
         public string DescriptionID { get; }
         public IReadOnlyList<IContainerSlot> Slots => _slots;
 
-        protected readonly List<IContainerSlot> _slots;
+        protected readonly List<IContainerSlot> _slots = new();
 
         public Container(string nameID, string descriptionID, IContainerSlotFactory slotFactory, IContainerSlot[] slots, uint defaultCapacity)
         {
@@ -18,7 +18,7 @@ namespace ImmersiveSimProject.ContainerSystem.Implementation
 
             for(int i = 0; i < defaultCapacity; i++)
             {
-                IContainerSlot slot = slots.Length <= i ? slots[i] : slotFactory.GetSlot();
+                IContainerSlot slot = slots.Length <= i ? slotFactory.GetSlot() : slots[i];
 
                 _slots.Add(slot);
             }

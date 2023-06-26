@@ -12,7 +12,7 @@ namespace ImmersiveSimProject.ContainerSystem.Implementation
         public event Action<IItemMeta, uint> ItemRemoved;
 
         public int Capacity => _container.Slots.Count;
-        public IReadOnlyList<IReadOnlyContainerSlot> Slots => (IReadOnlyList<IReadOnlyContainerSlot>)_container.Slots;
+        public IReadOnlyList<IReadOnlyContainerSlot> Slots => _container.Slots.Cast<IReadOnlyContainerSlot>().ToList();
         public bool IsEmpty => _container.Slots.All(slot => slot.IsEmpty);
         public bool IsFull => _container.Slots.All(slot => slot.IsFull);        
 
@@ -34,7 +34,7 @@ namespace ImmersiveSimProject.ContainerSystem.Implementation
                 return false;
             }
 
-            var allSlotsContainsItem = _container.Slots.Where(slot => slot.Item.Equals(itemMeta)).ToList();
+            var allSlotsContainsItem = GetAllSlotsContainsItem(itemMeta);
 
             if (allSlotsContainsItem != null && allSlotsContainsItem.Count > 0)
             {
@@ -45,6 +45,7 @@ namespace ImmersiveSimProject.ContainerSystem.Implementation
 
             return false;
         }
+     
 
         /// <summary>
         /// В случае успеха добавляет предмет в указанном кол-ве в первый свободный слот.
@@ -64,45 +65,19 @@ namespace ImmersiveSimProject.ContainerSystem.Implementation
                 return false;
             }
 
-            var notFullSlots = _container.Slots.Where(slot => (slot.Item.Equals(itemMeta) && !slot.IsFull) || slot.IsEmpty).ToList();
+            var notFullSlots = GetAllNotFullSlotsWithItem(itemMeta);
 
-            if (notFullSlots != null && notFullSlots.Count() > 0)
+            if (notFullSlots != null && notFullSlots.Count > 0)
             {
-                if (CanAddInFreeSlots(notFullSlots, itemMeta, amount))
+                if (CanAddInNotFullSlots(notFullSlots, itemMeta, amount))
                 {
-                    for (int i = 0; i < notFullSlots.Count(); i++)
-                    {
-                        var slot = notFullSlots[i];
-
-                        if (CanAddInSlot(slot, itemMeta, amount))
-                        {
-                            if (slot.IsEmpty)
-                            {
-                                slot.Item = itemMeta;
-                            }
-
-                            slot.Amount += amount;
-
-                            NotificateListeners(itemMeta, amount, ItemAdded);
-                            return true;
-                        }
-                        else
-                        {
-                            if (slot.IsEmpty)
-                            {
-                                slot.Item = itemMeta;
-                            }
-
-                            var canBeAddedAmount = slot.Item.MaxCapacityInSlot - slot.Amount;
-                            slot.Amount += canBeAddedAmount;
-                            amount -= canBeAddedAmount;
-                        }
-                    }
+                    AddInNotFullSlots(notFullSlots, itemMeta, amount);
+                    return true;
                 }
             }
 
-            return amount == 0;
-        }
+            return false;
+        }     
 
         public bool TryAddItemInSlot(int slotIndex, IItemMeta itemMeta, uint amount)
         {
@@ -153,7 +128,7 @@ namespace ImmersiveSimProject.ContainerSystem.Implementation
 
             if (ContainsAmount(item, amount))
             {
-                var containsSlots = _container.Slots.Where(slot => (slot.Item.Equals(item))).ToList();
+                var containsSlots = GetAllSlotsContainsItem(item);
 
                 for (int i = 0; i < containsSlots.Count; i++)
                 {
@@ -190,6 +165,7 @@ namespace ImmersiveSimProject.ContainerSystem.Implementation
             }
 
             var slot = _container.Slots[slotIndex];
+
 
             if (slot.Item.Equals(item) && slot.Amount >= amount)
             {
@@ -254,18 +230,18 @@ namespace ImmersiveSimProject.ContainerSystem.Implementation
             }
             else
             {
-                return itemMeta.MaxCapacityInSlot <= amount;
+                return itemMeta.MaxCapacityInSlot >= amount;
             }
         }
 
         /// <summary>
-        /// Проверяет можно ли добавить в свободные слоты предмет в нужном кол-ве
+        /// Проверяет можно ли добавить в свободные и неполные слоты предмет в нужном кол-ве
         /// </summary>
         /// <param name="freeSlots"></param>
         /// <param name="itemMeta"></param>
         /// <param name="amount"></param>
         /// <returns>Да/Нет</returns>
-        private bool CanAddInFreeSlots(List<IContainerSlot> freeSlots, IItemMeta itemMeta, uint amount)
+        private bool CanAddInNotFullSlots(List<IContainerSlot> freeSlots, IItemMeta itemMeta, uint amount)
         {
             for (int i = 0; i < freeSlots.Count(); i++)
             {
@@ -298,6 +274,61 @@ namespace ImmersiveSimProject.ContainerSystem.Implementation
                 return slot.Amount >= amount;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Возвращает все слоты содержащие предмет
+        /// </summary>
+        /// <param name="itemMeta"></param>
+        /// <returns>List<IContainerSlot></returns>
+        private List<IContainerSlot> GetAllSlotsContainsItem(IItemMeta itemMeta) 
+            => _container.Slots.Where(slot => !slot.IsEmpty && slot.Item.Equals(itemMeta)).ToList();
+
+        /// <summary>
+        /// Возвращает все неполные слоты содержащие предмет
+        /// </summary>
+        /// <param name="itemMeta"></param>
+        /// <returns>List<IContainerSlot></returns>
+        private List<IContainerSlot> GetAllNotFullSlotsWithItem(IItemMeta itemMeta)
+            => _container.Slots.Where(slot => (slot.IsEmpty || slot.Item.Equals(itemMeta) && !slot.IsFull)).ToList();
+
+        /// <summary>
+        /// Добавляет предмет в свободные и неполные слоты
+        /// </summary>
+        /// <param name="notFullSlots"></param>
+        /// <param name="itemMeta"></param>
+        /// <param name="amount"></param>
+        private void AddInNotFullSlots(List<IContainerSlot> notFullSlots, IItemMeta itemMeta, uint amount)
+        {
+            var fullAmount = amount;
+
+            for (int i = 0; i < notFullSlots.Count(); i++)
+            {
+                var slot = notFullSlots[i];
+
+                if (CanAddInSlot(slot, itemMeta, amount))
+                {
+                    if (slot.IsEmpty)
+                    {
+                        slot.Item = itemMeta;
+                    }
+
+                    slot.Amount += amount;
+                }
+                else
+                {
+                    if (slot.IsEmpty)
+                    {
+                        slot.Item = itemMeta;
+                    }
+
+                    var canBeAddedAmount = slot.Item.MaxCapacityInSlot - slot.Amount;
+                    slot.Amount += canBeAddedAmount;
+                    amount -= canBeAddedAmount;
+                }
+            }
+
+            NotificateListeners(itemMeta, fullAmount, ItemAdded);
         }
 
         /// <summary>

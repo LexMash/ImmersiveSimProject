@@ -8,7 +8,7 @@ namespace ImmersiveSimProject.ContainerSystem.Implementation
         public IItemMeta Item { get; set; }
         public uint Amount { get; set; }
         public bool IsEmpty => Item == null;
-        public bool IsFull => Item.MaxCapacityInSlot == Amount;
+        public bool IsFull => !IsEmpty && Item.MaxCapacityInSlot == Amount;
 
         public ContainerSlot(IItemMeta item, uint amount)
         {

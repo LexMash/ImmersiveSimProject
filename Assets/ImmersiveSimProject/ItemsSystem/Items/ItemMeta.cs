@@ -2,7 +2,8 @@
 
 namespace ImmersiveSimProject.ItemsSystem
 {
-    public abstract class ItemMeta : ScriptableObject, IItemMeta
+    [CreateAssetMenu(fileName = "ItemMeta", menuName = "Application/Items/ItemMeta")]
+    public class ItemMeta : ScriptableObject, IItemMeta
     {
         [field: SerializeField] public string NameID { get; private set; }
         [field: SerializeField] public string DescriptionID { get; private set; }
