@@ -3,22 +3,18 @@
     //надо подумать над этим
     public static class StandardOperations
     {
-        public static uint UINT_SubtractionClamp(uint health, uint damage)
+        public static uint UINT_SubtractionClamp(uint currentValue, uint subtractedValue)
         {
-            if (health <= damage)
+            if (currentValue <= subtractedValue)
                 return 0;
 
-            return health - damage;
+            return currentValue - subtractedValue;
         }
 
-        public static float Normalize(uint maxValue, uint currentValue)
-        {
-            return currentValue / (float)maxValue;
-        }
+        public static float Normalize(uint maxValue, uint currentValue) 
+            => currentValue / (float)maxValue;
 
-        public static float Normalize(int maxValue, int currentValue)
-        {
-            return currentValue / (float)maxValue;
-        }
+        public static float Normalize(int maxValue, int currentValue) 
+            => currentValue / (float)maxValue;
     }
 }

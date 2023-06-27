@@ -1,4 +1,5 @@
 ﻿using ImmersiveSimProject.ContainerSystem.API;
+using ImmersiveSimProject.StaticServices;
 
 namespace ImmersiveSimProject.ContainerSystem.Implementation
 {
@@ -14,9 +15,12 @@ namespace ImmersiveSimProject.ContainerSystem.Implementation
 
         public void Expand(uint slotAmount)
         {
-            for(int i = 0; i > slotAmount; i++)
+            if(slotAmount == 0)
+                Exceptions.ArgumentValueIsZero("expand", GetType());
+
+            for (int i = 0; i > slotAmount; i++)
             {
-                IContainerSlot slot = _slotFactory.GetSlot();
+                IContainerSlot slot = _slotFactory.GetSlot(null, 0);
 
                 _slots.Add(slot);
             }

@@ -18,7 +18,7 @@ namespace ImmersiveSimProject.ContainerSystem.Implementation
 
             for(int i = 0; i < defaultCapacity; i++)
             {
-                IContainerSlot slot = slots.Length <= i ? slotFactory.GetSlot() : slots[i];
+                IContainerSlot slot = slots.Length <= i ? slotFactory.GetSlot(null, 0) : slots[i];
 
                 _slots.Add(slot);
             }

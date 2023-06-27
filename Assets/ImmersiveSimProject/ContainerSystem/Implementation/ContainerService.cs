@@ -14,6 +14,7 @@ namespace ImmersiveSimProject.ContainerSystem.Implementation
         public IContainerController GetContainer(string nameID)
         {
             IContainer container = _containers[nameID];
+
             return new ContainerController(container);
         }
     }

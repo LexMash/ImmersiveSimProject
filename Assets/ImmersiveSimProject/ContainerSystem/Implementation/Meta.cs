@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace ImmersiveSimProject.ContainerSystem.Implementation
 {
+    /// <summary>
+    /// Класс для тестирования
+    /// </summary>
     public class Meta : IItemMeta
     {
         public Sprite Icon { get; private set; }

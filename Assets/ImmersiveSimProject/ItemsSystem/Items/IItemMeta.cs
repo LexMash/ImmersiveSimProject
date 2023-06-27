@@ -7,8 +7,8 @@ namespace ImmersiveSimProject.ItemsSystem
         public Sprite Icon { get; }
         public ItemView Visual { get; }     
         public string RecipeNameID { get; }
-        public uint Cost {get; }
-        public float Weight {get; }
-        public uint MaxCapacityInSlot{get; } 
+        public uint Cost { get; }
+        public float Weight { get; }
+        public uint MaxCapacityInSlot { get; } 
     }
 }

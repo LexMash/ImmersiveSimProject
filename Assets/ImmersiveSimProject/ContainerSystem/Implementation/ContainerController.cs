@@ -3,6 +3,7 @@ using ImmersiveSimProject.ItemsSystem;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using ImmersiveSimProject.StaticServices;
 
 namespace ImmersiveSimProject.ContainerSystem.Implementation
 {
@@ -30,8 +31,7 @@ namespace ImmersiveSimProject.ContainerSystem.Implementation
         {
             if (amount == 0)
             {
-                ZeroAmountWarning("find operation");
-                return false;
+                Exceptions.ArgumentValueIsZero("find operation", GetType());
             }
 
             var allSlotsContainsItem = GetAllSlotsContainsItem(itemMeta);
@@ -44,8 +44,7 @@ namespace ImmersiveSimProject.ContainerSystem.Implementation
             }
 
             return false;
-        }
-     
+        }  
 
         /// <summary>
         /// В случае успеха добавляет предмет в указанном кол-ве в первый свободный слот.
@@ -61,8 +60,7 @@ namespace ImmersiveSimProject.ContainerSystem.Implementation
 
             if (amount == 0)
             {
-                ZeroAmountWarning("add operation");
-                return false;
+                Exceptions.ArgumentValueIsZero("add operation", GetType());
             }
 
             var notFullSlots = GetAllNotFullSlotsWithItem(itemMeta);
@@ -83,8 +81,7 @@ namespace ImmersiveSimProject.ContainerSystem.Implementation
         {
             if (amount == 0)
             {
-                ZeroAmountWarning("add operation");
-                return false;
+                Exceptions.ArgumentValueIsZero("add operation", GetType());
             }
 
             var slot = _container.Slots[slotIndex];
@@ -122,8 +119,7 @@ namespace ImmersiveSimProject.ContainerSystem.Implementation
         {
             if (amount == 0)
             {
-                ZeroAmountWarning("remove operation"); ;
-                return false;
+                Exceptions.ArgumentValueIsZero("remove operation", GetType());
             }
 
             if (ContainsAmount(item, amount))
@@ -160,8 +156,7 @@ namespace ImmersiveSimProject.ContainerSystem.Implementation
         {
             if (amount == 0)
             {
-                ZeroAmountWarning("remove operation"); ;
-                return false;
+                Exceptions.ArgumentValueIsZero("remove operation", GetType());
             }
 
             var slot = _container.Slots[slotIndex];
@@ -301,27 +296,23 @@ namespace ImmersiveSimProject.ContainerSystem.Implementation
         private void AddInNotFullSlots(List<IContainerSlot> notFullSlots, IItemMeta itemMeta, uint amount)
         {
             var fullAmount = amount;
+            var slotsNeeded = amount / itemMeta.MaxCapacityInSlot;
 
-            for (int i = 0; i < notFullSlots.Count(); i++)
+            for (int i = 0; i < slotsNeeded; i++)
             {
                 var slot = notFullSlots[i];
 
-                if (CanAddInSlot(slot, itemMeta, amount))
+                if (slot.IsEmpty)
                 {
-                    if (slot.IsEmpty)
-                    {
-                        slot.Item = itemMeta;
-                    }
+                    slot.Item = itemMeta;
+                }
 
+                if (CanAddInSlot(slot, itemMeta, amount))
+                {                   
                     slot.Amount += amount;
                 }
                 else
                 {
-                    if (slot.IsEmpty)
-                    {
-                        slot.Item = itemMeta;
-                    }
-
                     var canBeAddedAmount = slot.Item.MaxCapacityInSlot - slot.Amount;
                     slot.Amount += canBeAddedAmount;
                     amount -= canBeAddedAmount;
@@ -330,13 +321,6 @@ namespace ImmersiveSimProject.ContainerSystem.Implementation
 
             NotificateListeners(itemMeta, fullAmount, ItemAdded);
         }
-
-        /// <summary>
-        /// Бросает исключение, если при выполнении операции в метод был передано нулевое кол-во
-        /// </summary>
-        /// <param name="operation"></param>
-        private void ZeroAmountWarning(string operation)
-            => new ArgumentException($"Amount cannot be 0 -{operation}- Container {_container.NameID}");
 
         /// <summary>
         /// Активирует необходимый эвент уведомляя подписчика о проведённой операции
