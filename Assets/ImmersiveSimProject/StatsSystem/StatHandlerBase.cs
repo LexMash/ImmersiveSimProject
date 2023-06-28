@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 namespace ImmersiveSimProject.StatsSystem
 {
-    public abstract class StatHandlerBase<TStat, T> : IStatHandler<TStat, T> where TStat : Stat<T>
+    public abstract class StatHandlerBase<TStat, TType> : IStatHandler<TStat, TType> where TStat : Stat<TType>
     {
         public event Action StatValueChanged;
 
-        public T BaseValue { get; }
-        public T CurrentValue => CalculateCurrentValue();
+        public TType BaseValue { get; }
+        public TType CurrentValue => CalculateCurrentValue();
 
         protected readonly List<TStat> _modificators;
 
@@ -25,9 +25,9 @@ namespace ImmersiveSimProject.StatsSystem
             NotificateListeners();
         }
 
-        public abstract void DecreaseBaseValue(T value);
-        public abstract void IncreaseBaseValue(T value);
-        protected abstract T CalculateCurrentValue();
+        public abstract void DecreaseBaseValue(TType value);
+        public abstract void IncreaseBaseValue(TType value);
+        protected abstract TType CalculateCurrentValue();
         protected void NotificateListeners() => StatValueChanged?.Invoke();
     }
 }

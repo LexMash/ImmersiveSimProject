@@ -63,13 +63,14 @@ namespace ImmersiveSimProject.ContainerSystem.Implementation
                 Exceptions.ArgumentValueIsZero("add operation", GetType());
             }
 
-            var notFullSlots = GetAllNotFullSlotsWithItem(itemMeta);
+            List<IContainerSlot> notFullSlots = GetNotFullSlots(itemMeta);
 
             if (notFullSlots != null && notFullSlots.Count > 0)
             {
                 if (CanAddInNotFullSlots(notFullSlots, itemMeta, amount))
                 {
                     AddInNotFullSlots(notFullSlots, itemMeta, amount);
+                    NotificateListeners(itemMeta, amount, ItemAdded);
                     return true;
                 }
             }
@@ -284,7 +285,7 @@ namespace ImmersiveSimProject.ContainerSystem.Implementation
         /// </summary>
         /// <param name="itemMeta"></param>
         /// <returns>List<IContainerSlot></returns>
-        private List<IContainerSlot> GetAllNotFullSlotsWithItem(IItemMeta itemMeta)
+        private List<IContainerSlot> GetNotFullSlots(IItemMeta itemMeta)
             => _container.Slots.Where(slot => (slot.IsEmpty || slot.Item.Equals(itemMeta) && !slot.IsFull)).ToList();
 
         /// <summary>
@@ -295,10 +296,7 @@ namespace ImmersiveSimProject.ContainerSystem.Implementation
         /// <param name="amount"></param>
         private void AddInNotFullSlots(List<IContainerSlot> notFullSlots, IItemMeta itemMeta, uint amount)
         {
-            var fullAmount = amount;
-            var slotsNeeded = amount / itemMeta.MaxCapacityInSlot;
-
-            for (int i = 0; i < slotsNeeded; i++)
+            for (int i = 0; i < notFullSlots.Count; i++)
             {
                 var slot = notFullSlots[i];
 
@@ -310,16 +308,18 @@ namespace ImmersiveSimProject.ContainerSystem.Implementation
                 if (CanAddInSlot(slot, itemMeta, amount))
                 {                   
                     slot.Amount += amount;
+                    break;
                 }
                 else
                 {
                     var canBeAddedAmount = slot.Item.MaxCapacityInSlot - slot.Amount;
                     slot.Amount += canBeAddedAmount;
                     amount -= canBeAddedAmount;
-                }
-            }
 
-            NotificateListeners(itemMeta, fullAmount, ItemAdded);
+                    if (amount == 0)
+                        break;
+                }
+            }           
         }
 
         /// <summary>

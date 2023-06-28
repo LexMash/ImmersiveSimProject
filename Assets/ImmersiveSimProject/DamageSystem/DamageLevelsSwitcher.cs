@@ -71,7 +71,7 @@ namespace ImmersiveSimProject.FightSystem.DamageSystem
             }
             else
             {
-                var normalize = StandardOperations.Normalize(_handler.BaseValue, _handler.CurrentValue);
+                float normalize = StandardOperations.Normalize(_handler.BaseValue, _handler.CurrentValue);
                 currentPercent = (uint)Math.Round(normalize * 100, 0);
             }
 

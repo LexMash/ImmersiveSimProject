@@ -3,16 +3,16 @@ using System;
 
 namespace ImmersiveSimProject.StatsSystem
 {
-    public interface IStatHandler<TStat,T> where TStat : Stat<T>
+    public interface IStatHandler<TStat,TType> where TStat : Stat<TType>
     {
         public event Action StatValueChanged;
 
-        public T BaseValue { get; }
-        public T CurrentValue { get; }
+        public TType BaseValue { get; }
+        public TType CurrentValue { get; }
 
         public void AddModificator(TStat modificator);
         public void RemoveModificator(TStat modificator);
-        public void IncreaseBaseValue(T value);
-        public void DecreaseBaseValue(T value);
+        public void IncreaseBaseValue(TType value);
+        public void DecreaseBaseValue(TType value);
     }
 }
