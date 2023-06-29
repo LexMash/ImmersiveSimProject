@@ -46,7 +46,7 @@ public class Runner : MonoBehaviour
             //uint amount = (uint)Random.Range(1, 10);
             IItemMeta item = _metas[3];
 
-            Debug.Log($"Add item {item.NameID} - {2} - {_controller.TryAddItem(item, 2)}");
+            Debug.Log($"Add item {item.NameID} - {2} - {_controller.TryAddItemInSlot(8,item, 4)}");
 
             PrintInventory();
         }
