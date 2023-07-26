@@ -5,7 +5,7 @@ namespace ImmersiveSimProject.ItemsSystem
 {
     public class MasterItemMetasDataBase : IMasterItemMetasDataBase
     {
-        private readonly SortedDictionary<string, IItemMeta> _itemMetasMap = new();
+        private readonly Dictionary<string, IItemMeta> _itemMetasMap = new();
 
         public MasterItemMetasDataBase(IItemMeta[] itemMetas) 
         { 
